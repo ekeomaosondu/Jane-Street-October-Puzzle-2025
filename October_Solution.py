@@ -128,3 +128,18 @@ plt.title('Q as a function of P')
 plt.xlabel('P')
 plt.ylabel('Q')
 plt.show()
+
+x = torch.nn.Parameter(torch.tensor(.2))  # or: torch.randn(2, requires_grad=True)
+
+opt = torch.optim.Adam([x], lr=1e-2)
+
+for _ in range(1000):
+    opt.zero_grad()
+    # example loss: (x0-1)^2 + (x1+2)^2
+    loss = -(q_of_p(x))
+    loss.backward()     # autograd fills x.grad
+    opt.step()          # Adam updates x in-place
+
+
+print(f'Optimal Q at x = {x.detach().item()}.12f')
+print(f'Optimal Q (Full Count Reach Prob) at q = {q_of_p(x.detach().item())}.12f')
