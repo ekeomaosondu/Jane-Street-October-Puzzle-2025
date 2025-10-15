@@ -21,3 +21,12 @@ def q_of_p(p):
             dp_payoff_matrices[-1].append([0, 0, 0, 0])
             dp_swing_strike_frequencies[-1].append(0)
             dp_expected_values[-1].append(0)
+
+    # Subroutine to compute the strategy and expected value of a payoff matrix
+    # Expects 2 x 2 payoff matrix of the form matrix = flatten([[a, b], [c, d]])
+    def compute_ev(payoffs):
+        a, b, c, d = payoffs
+        prob = (d - b) / (a + d - b - c)
+
+        # return tuple of the batter's expected value and the swing probability.
+        return a * prob + (1 - prob) * b, prob
