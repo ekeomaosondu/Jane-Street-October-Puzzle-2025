@@ -70,3 +70,12 @@ def q_of_p(p): #The probaility of reaching full count P(Homerun) = p
                 dp_payoff_matrices[strikes][balls][2] += dp_expected_values[strikes + 1][balls]
 
             dp_expected_values[strikes][balls], dp_swing_strike_frequencies[strikes][balls] = compute_ev(dp_payoff_matrices[strikes][balls])
+
+    #Initialize Full Count State Reach Probabilities
+    dp_q = []
+    for i in range(STRIKES + 1):
+        dp_q.append([])
+        for j in range(BALLS + 1):
+            dp_q[-1].append(0)
+
+    
