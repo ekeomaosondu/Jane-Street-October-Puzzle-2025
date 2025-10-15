@@ -1,8 +1,22 @@
 import torch
 from matplotlib import pyplot as plt
 
-def q_of_p(p):
+def q_of_p(p): #The probaility of reaching full count P(Homerun) = p
+
+    #Full Count Parameters
+    STRIKES = 2
+    BALLS = 3
+
+
+
     # Stores the subgame payoff matrices
+    # The payoff matrices in this implementation are of the following form:
+
+    #           Strike            Ball
+    # 
+    #  Swing    EV of Swing     EV of Strike
+    #
+    #   Wait    EV of Strike     EV of Ball
     dp_payoff_matrices = [] 
 
     #Stores the expected value of each subgame
@@ -30,3 +44,29 @@ def q_of_p(p):
 
         # return tuple of the batter's expected value and the swing probability.
         return a * prob + (1 - prob) * b, prob
+    
+    # Build DP table in reverse topological order
+    for strikes in range(STRIKES, -1, -1):
+        for balls in range(BALLS, -1, -1):
+
+            # If state corresponds to 3 balls
+            if balls == BALLS:
+                # Expected value of ball is 1
+                expected_value_ball = 1
+            else:
+                # Otherwise, we take the expected value of the next reached subgame
+                expected_value_ball = dp_expected_values[strikes][balls + 1]
+
+            dp_payoff_matrices[strikes][balls][3] += expected_value_ball
+            
+
+            #The EV of a swing is 4 * P(Home Run) + EV of Strike * (1 - P(Home Run))
+            dp_payoff_matrices[strikes][balls][0] += 4 * p
+            
+
+            if strikes != STRIKES:
+                dp_payoff_matrices[strikes][balls][0] += dp_expected_values[strikes + 1][balls] * (1-p)
+                dp_payoff_matrices[strikes][balls][1] += dp_expected_values[strikes + 1][balls]
+                dp_payoff_matrices[strikes][balls][2] += dp_expected_values[strikes + 1][balls]
+
+            dp_expected_values[strikes][balls], dp_swing_strike_frequencies[strikes][balls] = compute_ev(dp_payoff_matrices[strikes][balls])
