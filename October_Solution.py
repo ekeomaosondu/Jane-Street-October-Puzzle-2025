@@ -111,3 +111,20 @@ def q_of_p(p): #The probaility of reaching full count P(Homerun) = p
     
         
     return dp_q[0][0] #Probability of reaching full count from 0 balls and 0 strikes
+
+p_values = []
+q_values = []
+trials = 10000
+for i in range(trials):
+    if i == 0:
+        continue
+    p = i / trials
+    p_values.append(p)
+    q_values.append(q_of_p(p))
+
+
+plt.scatter(p_values, q_values)
+plt.title('Q as a function of P')
+plt.xlabel('P')
+plt.ylabel('Q')
+plt.show()
