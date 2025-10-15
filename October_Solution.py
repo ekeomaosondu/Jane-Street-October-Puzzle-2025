@@ -78,4 +78,34 @@ def q_of_p(p): #The probaility of reaching full count P(Homerun) = p
         for j in range(BALLS + 1):
             dp_q[-1].append(0)
 
-    
+    for strikes in range(STRIKES, -1, -1):
+        for balls in range(BALLS, -1, -1):
+
+            #P(Reach Full Count | Full Count) = 1
+            if i == STRIKES and j == BALLS:
+                dp_q[strikes][balls] = 1
+
+
+            else:
+                # Again, probability of swing at equilibrium equals probability of throwing strike
+                # This is because our subgames are symmetric and zero-sum
+                strike_prob = dp_swing_strike_frequencies[i][j]
+                swing_prob = strike_prob
+
+                q = 0
+                
+                if balls != BALLS:
+                    p_ball = (1 - strike_prob) * (1-swing_prob)
+                    next_count = dp_q[i][j + 1]
+                    q += p_ball * next_count
+
+                elif strikes != STRIKES:
+                    p_swing_ball = (1 - strike_prob) * swing_prob
+                    p_no_home_run = strike_prob * swing_prob * (1 - p)
+                    p_wait_strike = strike_prob * (1 - swing_prob)
+                    next_count = dp_q[strikes + 1][balls]
+                    q += (p_no_home_run + p_swing_ball + p_wait_strike) * next_count
+
+                dp_q[strikes][balls] = q
+
+    return dp_q[0][0] #Probability of reaching full count from 0 balls and 0 strikes
